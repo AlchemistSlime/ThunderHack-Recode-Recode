@@ -22,9 +22,6 @@
 *   **Commands:** Use the prefix `@` in chat to execute client commands (e.g., `@bind`).
 *   **Module Binding:** Middle-click a module in the ClickGUI to bind it to a key.
 
-## 📸 Screenshots
-*(Добавь сюда свои скриншоты с помощью Markdown: `![Main Menu](link_to_image)`)*
-
 ## 👥 Credits
 *   **Alchemist Slime** - Complete rewrite, UI redesign, dynamic colors, new features implementation.
 *   **pan4ur** - Original ThunderHack Recode creator.

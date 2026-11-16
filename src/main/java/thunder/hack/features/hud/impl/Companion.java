@@ -25,7 +25,7 @@ public class Companion extends HudElement {
     }
 
     public Setting<Integer> scale = new Setting<>("Scale", 50, 0, 100);
-    public Setting<Mode> mode = new Setting<>("Mode", Mode.Boykisser);
+    public Setting<Mode> mode = new Setting<>("Mode", Mode.Emperor);
 
     public static int currentFrame;
     private String message = "";
@@ -53,8 +53,10 @@ public class Companion extends HudElement {
         context.getMatrices().translate((int) getPosX() + 100, (int) getPosY() + 100, 0);
         context.getMatrices().scale((float) scale.getValue() / 100f, (float) scale.getValue() / 100f, 1);
         context.getMatrices().translate(-((int) getPosX() + 100), -((int) getPosY() + 100), 0);
-        if (mode.getValue() == Mode.Boykisser)
-            context.drawTexture(net.minecraft.client.render.RenderLayer::getGuiTextured, TextureStorage.boykisser, (int) getPosX(), (int) getPosY(), (float)(0), (float)(currentFrame * 128), 130, 128, 130, 6784);
+        if (mode.getValue() == Mode.Emperor)
+            drawStatic(context, TextureStorage.emperor, 256f);
+        else if (mode.getValue() == Mode.SpaceMarine)
+            drawStatic(context, TextureStorage.spaceMarine, 256f);
         else if (mode.getValue() == Mode.Paimon)
             context.drawTexture(net.minecraft.client.render.RenderLayer::getGuiTextured, TextureStorage.paimon, (int) getPosX(), (int) getPosY(), (float)(0), (float)(currentFrame * 200), 200, 200, 200, 10600);
         else if (mode.getValue() == Mode.Baltika)
@@ -98,7 +100,32 @@ public class Companion extends HudElement {
         lastPop.reset();
     }
 
+    private final java.util.Map<net.minecraft.util.Identifier, int[]> dimsCache = new java.util.HashMap<>();
+
+    // размеры картинки читаем из ресурса один раз
+    private int[] dims(net.minecraft.util.Identifier id) {
+        return dimsCache.computeIfAbsent(id, k -> {
+            try (java.io.InputStream in = mc.getResourceManager().getResource(k).get().getInputStream();
+                 net.minecraft.client.texture.NativeImage img = net.minecraft.client.texture.NativeImage.read(in)) {
+                return new int[]{img.getWidth(), img.getHeight()};
+            } catch (Exception e) {
+                return new int[]{256, 256};
+            }
+        });
+    }
+
+    // статичная картинка: рисуем целиком и масштабируем до высоты targetH
+    private void drawStatic(DrawContext context, net.minecraft.util.Identifier id, float targetH) {
+        int[] d = dims(id);
+        float f = targetH / d[1];
+        context.getMatrices().push();
+        context.getMatrices().translate((int) getPosX(), (int) getPosY(), 0);
+        context.getMatrices().scale(f, f, 1);
+        context.drawTexture(net.minecraft.client.render.RenderLayer::getGuiTextured, id, 0, 0, 0f, 0f, d[0], d[1], d[0], d[1]);
+        context.getMatrices().pop();
+    }
+
     private enum Mode {
-        Boykisser, Paimon, Baltika, Kowk
+        Emperor, SpaceMarine, Paimon, Baltika, Kowk
     }
 }

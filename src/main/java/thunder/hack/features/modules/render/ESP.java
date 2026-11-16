@@ -10,6 +10,7 @@ import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.AreaEffectCloudEntity;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.TntEntity;
 import net.minecraft.entity.decoration.EndCrystalEntity;
@@ -62,40 +63,43 @@ public class ESP extends Module {
 
     private final Setting<Mode> mode = new Setting<>("Mode", Mode.Outline);
     private final Setting<Integer> fillAlpha = new Setting<>("FillAlpha", 80, 0, 255, v -> mode.is(Mode.Outline));
-    private final Setting<Integer> lineWidth = new Setting<>("LineWidth", 2, 1, 4, v -> mode.is(Mode.Outline));
-    private final Setting<Boolean> throughWalls = new Setting<>("ThroughWalls", true, v -> mode.is(Mode.Outline));
+    private final Setting<Integer> lineWidth = new Setting<>("LineWidth", 2, 1, 6, v -> mode.is(Mode.Outline));
+    private final Setting<Integer> glow = new Setting<>("Glow", 70, 0, 100, v -> mode.is(Mode.Outline));
 
-    private final Setting<SettingGroup> boxEsp = new Setting<>("Box", new SettingGroup(false, 0));
+    private final Setting<SettingGroup> boxEsp = new Setting<>("Targets", new SettingGroup(false, 0));
     private final Setting<Boolean> players = new Setting<>("Players", true).addToGroup(boxEsp);
     private final Setting<Boolean> friends = new Setting<>("Friends", true).addToGroup(boxEsp);
     private final Setting<Boolean> crystals = new Setting<>("Crystals", true).addToGroup(boxEsp);
     private final Setting<Boolean> creatures = new Setting<>("Creatures", true).addToGroup(boxEsp);
     private final Setting<Boolean> monsters = new Setting<>("Monsters", true).addToGroup(boxEsp);
     private final Setting<Boolean> ambients = new Setting<>("Ambients", false).addToGroup(boxEsp);
+    private final Setting<Boolean> items = new Setting<>("Items", false).addToGroup(boxEsp);
     private final Setting<Boolean> others = new Setting<>("Others", false).addToGroup(boxEsp);
-    private final Setting<Boolean> outline = new Setting<>("Outline", true).addToGroup(boxEsp);
-    private final Setting<Colors> colorMode = new Setting<>("ColorMode", Colors.SyncColor).addToGroup(boxEsp);
-    private final Setting<Boolean> renderHealth = new Setting<>("renderHealth", true).addToGroup(boxEsp);
+    private final Setting<Boolean> outline = new Setting<>("Outline", true, v -> mode.is(Mode.Box)).addToGroup(boxEsp);
+    private final Setting<Colors> colorMode = new Setting<>("ColorMode", Colors.SyncColor, v -> mode.is(Mode.Box)).addToGroup(boxEsp);
+    private final Setting<Boolean> renderHealth = new Setting<>("renderHealth", true, v -> mode.is(Mode.Box)).addToGroup(boxEsp);
 
-    private final Setting<SettingGroup> boxColors = new Setting<>("BoxColors", new SettingGroup(false, 0));
+    private final Setting<SettingGroup> boxColors = new Setting<>("Colors", new SettingGroup(false, 0));
     private final Setting<ColorSetting> playersC = new Setting<>("PlayersC", new ColorSetting(new Color(0xFFFFFF))).addToGroup(boxColors);
     private final Setting<ColorSetting> friendsC = new Setting<>("FriendsC", new ColorSetting(new Color(0x30FF00))).addToGroup(boxColors);
     private final Setting<ColorSetting> crystalsC = new Setting<>("CrystalsC", new ColorSetting(new Color(0x00BBFF))).addToGroup(boxColors);
     private final Setting<ColorSetting> creaturesC = new Setting<>("CreaturesC", new ColorSetting(new Color(0x00FF00))).addToGroup(boxColors);
     private final Setting<ColorSetting> monstersC = new Setting<>("MonstersC", new ColorSetting(new Color(0xFF0000))).addToGroup(boxColors);
     private final Setting<ColorSetting> ambientsC = new Setting<>("AmbientsC", new ColorSetting(new Color(0x7B00FF))).addToGroup(boxColors);
+    private final Setting<ColorSetting> itemsC = new Setting<>("ItemsC", new ColorSetting(new Color(0xFFAA00))).addToGroup(boxColors);
     private final Setting<ColorSetting> othersC = new Setting<>("OthersC", new ColorSetting(new Color(0xFF0062))).addToGroup(boxColors);
     public final Setting<ColorSetting> healthB = new Setting<>("healthB", new ColorSetting(new Color(0xff1100))).addToGroup(boxColors);
     public final Setting<ColorSetting> healthU = new Setting<>("healthU", new ColorSetting(new Color(0x2fff00))).addToGroup(boxColors);
 
     private float dizorentAnimation = 0f;
 
+
     public boolean isOutlineMode() {
         return mode.is(Mode.Outline);
     }
 
-    public boolean isThroughWalls() {
-        return throughWalls.getValue();
+    public int getGlow() {
+        return glow.getValue();
     }
 
     public int getFillAlpha() {
@@ -107,7 +111,6 @@ public class ESP extends Module {
     }
 
     public void onRender3D(MatrixStack stack) {
-        if (mode.is(Mode.Outline)) Managers.SHADER.renderShaders();
         if(mc.options.hudHidden) return;
         if (lingeringPotions.getValue()) {
             for (Entity ent : mc.world.getEntities()) {
@@ -367,11 +370,26 @@ public class ESP extends Module {
         if (entity instanceof EndCrystalEntity)
             return crystals.getValue();
 
+        if (entity instanceof ItemEntity)
+            return items.getValue();
+
         return switch (entity.getType().getSpawnGroup()) {
-            case CREATURE, WATER_CREATURE -> creatures.getValue();
+            case CREATURE, WATER_CREATURE, UNDERGROUND_WATER_CREATURE, AXOLOTLS -> creatures.getValue();
             case MONSTER -> monsters.getValue();
             case AMBIENT, WATER_AMBIENT -> ambients.getValue();
             default -> others.getValue();
+        };
+    }
+
+    public Color getPaletteColor(int i) {
+        return switch (i) {
+            case 0 -> playersC.getValue().getColorObject();
+            case 1 -> friendsC.getValue().getColorObject();
+            case 2 -> crystalsC.getValue().getColorObject();
+            case 3 -> creaturesC.getValue().getColorObject();
+            case 4 -> monstersC.getValue().getColorObject();
+            case 5 -> ambientsC.getValue().getColorObject();
+            default -> othersC.getValue().getColorObject();
         };
     }
 
@@ -388,8 +406,11 @@ public class ESP extends Module {
         if (entity instanceof EndCrystalEntity)
             return crystalsC.getValue().getColorObject();
 
+        if (entity instanceof ItemEntity)
+            return itemsC.getValue().getColorObject();
+
         return switch (entity.getType().getSpawnGroup()) {
-            case CREATURE, WATER_CREATURE -> creaturesC.getValue().getColorObject();
+            case CREATURE, WATER_CREATURE, UNDERGROUND_WATER_CREATURE, AXOLOTLS -> creaturesC.getValue().getColorObject();
             case MONSTER -> monstersC.getValue().getColorObject();
             case AMBIENT, WATER_AMBIENT -> ambientsC.getValue().getColorObject();
             default -> othersC.getValue().getColorObject();

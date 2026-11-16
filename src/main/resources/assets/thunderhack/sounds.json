@@ -1,4 +1,12 @@
 {
+  "menu_music": {
+    "sounds": [
+      {
+        "name": "thunderhack:street-title-edit",
+        "stream": true
+      }
+    ]
+  },
   "keypress": {
     "sounds": [
       "thunderhack:keypress"

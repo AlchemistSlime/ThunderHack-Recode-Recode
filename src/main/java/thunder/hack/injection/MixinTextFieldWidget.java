@@ -24,6 +24,9 @@ public abstract class MixinTextFieldWidget {
     private void thFrame(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
         if (!ClientSettings.customButtons.getValue() || !drawsBackground) return;
 
+        // ванильная рамка рисуется пакетом — сбрасываем его, чтобы наша рамка легла поверх (иначе мигала вместе с курсором)
+        context.draw();
+
         ClickableWidget w = (ClickableWidget) (Object) this;
         float x = w.getX(), y = w.getY(), width = w.getWidth(), height = w.getHeight();
         Color c = UiKit.alpha(UiKit.accent(0), w.isFocused() ? 1f : 0.65f);

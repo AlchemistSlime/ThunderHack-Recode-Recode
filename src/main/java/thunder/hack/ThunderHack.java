@@ -26,7 +26,7 @@ public class ThunderHack implements ModInitializer {
     public static final ModMetadata MOD_META;
 
     public static final String MOD_ID = "thunderhack";
-    public static final String VERSION = "2.2.2";
+    public static final String VERSION = "2.4.3";
     public static String GITHUB_HASH = "0";
     public static String BUILD_DATE = "1 Jan 1970";
 
@@ -69,6 +69,7 @@ public class ThunderHack implements ModInitializer {
         Managers.subscribe();
 
         Render2DEngine.initShaders();
+        thunder.hack.core.MenuMusic.init();
 
         // масштаб интерфейса при запуске (0 в настройке GuiScaleOnLaunch = не трогать)
         ClientLifecycleEvents.CLIENT_STARTED.register(client -> {

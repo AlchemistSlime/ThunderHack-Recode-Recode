@@ -44,4 +44,8 @@ public interface IMinecraftClient {
     @Mutable
     @Accessor("abuseReportContext")
     void setAbuseReportContextT(AbuseReportContext abuseReportContext);
+
+    @Mutable
+    @Accessor("framebuffer")
+    void th$setFramebuffer(net.minecraft.client.gl.Framebuffer framebuffer);
 }

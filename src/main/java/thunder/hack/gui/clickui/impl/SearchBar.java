@@ -22,8 +22,13 @@ public class SearchBar extends AbstractButton {
         Render2DEngine.drawGuiBase(context.getMatrices(), x + 4, y + 1f, width - 8, height - 2, 1f, Render2DEngine.isHovered(mouseX, mouseY, x, y, width, height) ? 0.8f : 0f);
         if (!listening)
             FontRenderers.sf_medium.drawGradientString(context.getMatrices(), "Search...", x + 7f, y + height / 2f - 3, 2);
-        else
-            FontRenderers.sf_medium.drawGradientString(context.getMatrices(), moduleName + (mc.player == null || ((mc.player.age / 10) % 2 == 0) ? " " : "_"), x + 7f, y + 5f, 2);
+        else {
+            // текст всегда один и тот же, курсор рисуется отдельно — иначе при мигании ломался контур/градиент
+            if (!moduleName.isEmpty())
+                FontRenderers.sf_medium.drawGradientString(context.getMatrices(), moduleName, x + 7f, y + 5f, 2);
+            if (mc.player == null || ((mc.player.age / 10) % 2 != 0))
+                FontRenderers.sf_medium.drawString(context.getMatrices(), "_", x + 7f + FontRenderers.sf_medium.getStringWidth(moduleName), y + 5f, thunder.hack.features.modules.client.HudEditor.getColor(0).getRGB());
+        }
 
         if (Render2DEngine.isHovered(mouseX, mouseY, x, y, width, height)) {
             if (GLFW.glfwGetPlatform() != GLFW.GLFW_PLATFORM_WAYLAND) {

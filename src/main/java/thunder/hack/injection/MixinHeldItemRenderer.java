@@ -37,12 +37,6 @@ public abstract class MixinHeldItemRenderer {
         ThunderHack.EVENT_BUS.post(event);
     }
 
-    @Inject(method = "renderFirstPersonItem", at = @At(value = "RETURN"))
-    private void onRenderItemPost(AbstractClientPlayerEntity player, float tickDelta, float pitch, Hand hand, float swingProgress, ItemStack item, float equipProgress, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, CallbackInfo ci) {
-        if (ModuleManager.chams.isEnabled() && ModuleManager.chams.handItems.getValue())
-            RenderSystem.setShaderColor(1f,1f,1f,1f);
-    }
-
     @Inject(method = "renderFirstPersonItem", at = @At(value = "HEAD"), cancellable = true)
     private void onRenderItemHook(AbstractClientPlayerEntity player, float tickDelta, float pitch, Hand hand, float swingProgress, ItemStack item, float equipProgress, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, CallbackInfo ci) {
         if (Managers.MODULE != null && ModuleManager.animations.shouldAnimate() && !(item.isEmpty()) && !(item.getItem() instanceof FilledMapItem)) {

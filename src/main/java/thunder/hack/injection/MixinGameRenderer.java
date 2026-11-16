@@ -1,5 +1,7 @@
 package thunder.hack.injection;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderTickCounter;
@@ -80,10 +82,12 @@ public abstract class MixinGameRenderer {
         RenderSystem.getModelViewStack().popMatrix();
     }
 
-    @Inject(method = "renderWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/GameRenderer;renderHand(Lnet/minecraft/client/render/Camera;FLorg/joml/Matrix4f;)V", shift = At.Shift.AFTER))
-    public void postRender3dHook(RenderTickCounter tickCounter, CallbackInfo ci) {
+    // руки рисуются как обычно, затем (если включён Shaders → Hands) ещё раз в буфер шейдера
+    @WrapOperation(method = "renderWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/GameRenderer;renderHand(Lnet/minecraft/client/render/Camera;FLorg/joml/Matrix4f;)V"), require = 0)
+    private void renderHandHook(GameRenderer instance, Camera camera, float tickDelta, Matrix4f matrix, Operation<Void> original) {
+        original.call(instance, camera, tickDelta, matrix);
         if (Module.fullNullCheck()) return;
-        Managers.SHADER.renderShaders();
+        Managers.SHADER.renderHands(() -> original.call(instance, camera, tickDelta, matrix));
     }
 
     @Redirect(method = "renderWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/MathHelper;lerp(FFF)F"))

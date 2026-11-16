@@ -37,7 +37,8 @@ public final class TextureStorage {
     public static final Identifier swordIcon = Identifier.of("thunderhack", "textures/hud/icons/sword.png");
     public static final Identifier memoryIcon = Identifier.of("thunderhack", "textures/hud/icons/memory.png");
     public static final Identifier tpsIcon = Identifier.of("thunderhack", "textures/hud/icons/tps.png");
-    public static final Identifier boykisser = Identifier.of("thunderhack", "textures/hud/elements/boykisser.png");
+    public static final Identifier emperor = Identifier.of("thunderhack", "textures/hud/elements/emperor.png");
+    public static final Identifier spaceMarine = Identifier.of("thunderhack", "textures/hud/elements/space-marine.png");
     public static final Identifier paimon = Identifier.of("thunderhack", "textures/hud/elements/paimon.png");
     public static final Identifier baltika = Identifier.of("thunderhack", "textures/hud/elements/baltika.png");
     public static final Identifier kowk = Identifier.of("thunderhack", "textures/hud/elements/kowk.png");

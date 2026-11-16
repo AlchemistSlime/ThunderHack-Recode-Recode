@@ -246,7 +246,6 @@ public class ModuleManager implements IManager {
     public static Nuker nuker = new Nuker();
     public static Media media = new Media();
     public static Ghost ghost = new Ghost();
-    public static Chams chams = new Chams();
     public static Blink blink = new Blink();
     public static Phase phase = new Phase();
     public static NoBob noBob = new NoBob();
@@ -256,6 +255,7 @@ public class ModuleManager implements IManager {
     public static Aura aura = new Aura();
     public static FOV fov = new FOV();
     public static ESP esp = new ESP();
+    public static Shaders shaders = new Shaders();
     public static RPC rpc = new RPC();
 
     public ModuleManager() {

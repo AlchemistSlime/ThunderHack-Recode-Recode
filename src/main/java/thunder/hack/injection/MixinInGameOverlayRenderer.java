@@ -27,4 +27,11 @@ public class MixinInGameOverlayRenderer {
         if (ModuleManager.noRender.isEnabled() && ModuleManager.noRender.blockOverlay.getValue())
             ci.cancel();
     }
+
+    // пока руки рисуются в буфер шейдера, оверлеи (огонь, вода, стена) не нужны — иначе зальют весь экран
+    @Inject(method = "renderOverlays", at = @At("HEAD"), cancellable = true, require = 0)
+    private static void renderOverlaysHook(CallbackInfo ci) {
+        if (thunder.hack.core.manager.client.ShaderManager.renderingHands)
+            ci.cancel();
+    }
 }

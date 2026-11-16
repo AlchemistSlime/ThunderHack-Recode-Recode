@@ -4,7 +4,7 @@
 
 ## ✨ Features
 *   **Almost Completely Rewritten:** The core code has been rebuilt from the ground up to support modern Minecraft versions (1.21.4 and above) and the latest rendering pipeline.
-*   **New Innovations & Cleanup:** Added new features and functionality while removing outdated/broken legacy systems (e.g., the old arm shader engine was removed due to engine incompatibilities in newer versions).
+*   **New Innovations & Cleanup:** Added new features and functionality while removing outdated/broken legacy systems.
 *   **Dynamic Custom GUI:** A completely redesigned, sleek dark-themed UI. The accent colors are dynamic and can be customized directly in the client settings.
 *   **Crystal & Sword HvH Focused:** Retains and improves the core PvP modules and combat mechanics that made the original client famous.
 *   **Custom Main Menu & Settings:** Integrated custom menus for a seamless and unique experience.
